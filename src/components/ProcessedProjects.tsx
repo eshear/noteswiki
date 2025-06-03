@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
-import { FaSearch, FaTimes, FaTh, FaList } from 'react-icons/fa';
+import { FaTimes, FaTh, FaList } from 'react-icons/fa';
 
 // Interface should match the structure from the API
 interface ProcessedProject {
@@ -19,7 +19,7 @@ interface ProcessedProjectsProps {
   showHeader?: boolean;
   maxItems?: number;
   className?: string;
-  messages?: any; // Translation messages
+  messages?: Record<string, unknown>; // Translation messages
 }
 
 export default function ProcessedProjects({ 
@@ -47,8 +47,11 @@ export default function ProcessedProjects({
   };
 
   const t = (key: string) => {
-    if (messages?.projects?.[key]) {
-      return messages.projects[key];
+    if (messages && typeof messages === 'object' && 'projects' in messages) {
+      const projects = messages.projects as Record<string, string>;
+      if (projects && typeof projects === 'object' && key in projects) {
+        return projects[key];
+      }
     }
     return defaultMessages[key as keyof typeof defaultMessages] || key;
   };
